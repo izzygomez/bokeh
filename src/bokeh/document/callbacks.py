@@ -41,6 +41,7 @@ from ..events import (
     ModelEvent,
 )
 from ..model import Model
+from ..models.callbacks import Callback as JSEventCallback
 from ..util.callback_manager import _check_callback
 from .events import (  # RootAddedEvent,; RootRemovedEvent,; TitleChangedEvent,
     DocumentPatchedEvent,
@@ -90,6 +91,7 @@ class DocumentCallbackManager:
 
     _change_callbacks: dict[Any, DocumentChangeCallback]
     _event_callbacks: dict[str, list[EventCallback]]
+    _js_event_callbacks: dict[str, list[JSEventCallback]]
     _message_callbacks: dict[str, list[MessageCallback]]
     _session_destroyed_callbacks: set[SessionDestroyedCallback]
     _session_callbacks: set[SessionCallback]
@@ -111,6 +113,7 @@ class DocumentCallbackManager:
 
         self._change_callbacks = {}
         self._event_callbacks = defaultdict(list)
+        self._js_event_callbacks = defaultdict(list)
         self._message_callbacks = defaultdict(list)
         self._session_destroyed_callbacks = set()
         self._session_callbacks = set()
@@ -194,6 +197,9 @@ class DocumentCallbackManager:
         self._event_callbacks.clear()
         del self._event_callbacks
 
+        self._js_event_callbacks.clear()
+        del self._js_event_callbacks
+
         self._message_callbacks.clear()
         del self._message_callbacks
 
@@ -264,7 +270,7 @@ class DocumentCallbackManager:
         if not receiver in self._change_callbacks:
             self._change_callbacks[receiver] = lambda event: event.dispatch(receiver)
 
-    def on_event(self, event: str | Type[Event], *callbacks: EventCallback) -> None:
+    def on_event(self, event: str | Type[Event], *callbacks: EventCallback | JSEventCallback) -> None:
         ''' Provide callbacks to invoke if a bokeh event is received.
 
         '''
@@ -280,9 +286,11 @@ class DocumentCallbackManager:
                              "to a ModelEvent use the Model.on_event method.")
 
         for callback in callbacks:
-            _check_callback(callback, ('event',), what='Event callback')
-
-        self._event_callbacks[event].extend(callbacks)
+            if isinstance(callback, JSEventCallback):
+                self._js_event_callbacks[event].append(callback)
+            else:
+                _check_callback(callback, ('event',), what='Event callback')
+                self._event_callbacks[event].append(callback)
 
     def on_message(self, msg_type: str, *callbacks: MessageCallback) -> None:
         self._message_callbacks[msg_type].extend(callbacks)

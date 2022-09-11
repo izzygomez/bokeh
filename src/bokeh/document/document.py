@@ -65,6 +65,7 @@ from .callbacks import (
     Callback,
     DocumentCallbackManager,
     EventCallback,
+    JSEventCallback,
     MessageCallback,
 )
 from .events import (
@@ -529,7 +530,7 @@ class Document:
         '''
         self.callbacks.on_change_dispatch_to(receiver)
 
-    def on_event(self, event: str | Type[Event], *callbacks: EventCallback) -> None:
+    def on_event(self, event: str | Type[Event], *callbacks: EventCallback | JSEventCallback) -> None:
         ''' Provide callbacks to invoke if a bokeh event is received.
 
         '''
@@ -731,12 +732,14 @@ class Document:
         serializer = Serializer(deferred=deferred)
         defs = serializer.encode(data_models)
         roots = serializer.encode(self._roots)
+        callbacks = serializer.encode(self.callbacks._js_event_callbacks)
 
         doc_json = DocJson(
             version=__version__,
             title=self.title,
             defs=defs,
             roots=roots,
+            callbacks=callbacks,
         )
 
         self.models.flush()
