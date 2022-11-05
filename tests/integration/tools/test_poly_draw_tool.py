@@ -49,7 +49,7 @@ def _make_plot(num_objects=0, drag=True, vertices=False):
     source = ColumnDataSource(dict(xs=[[1, 2]], ys=[[1, 1]]))
     plot = Plot(height=400, width=400, x_range=Range1d(0, 3), y_range=Range1d(0, 3), min_border=0)
     renderer = plot.add_glyph(source, MultiLine(xs='xs', ys='ys'))
-    tool = PolyDrawTool(num_objects=num_objects, drag=drag, renderers=[renderer])
+    tool = PolyDrawTool(num_objects=num_objects, drag=drag, renderers=[renderer], empty_value=0)
     if vertices:
         psource = ColumnDataSource(dict(x=[], y=[]))
         prenderer = plot.add_glyph(psource, Circle(x='x', y='y', size=10))
@@ -66,7 +66,7 @@ def _make_server_plot(expected) -> tuple[ModifyDoc, Plot]:
     def modify_doc(doc):
         source = ColumnDataSource(dict(xs=[[1, 2]], ys=[[1, 1]]))
         renderer = plot.add_glyph(source, MultiLine(xs='xs', ys='ys'))
-        tool = PolyDrawTool(renderers=[renderer])
+        tool = PolyDrawTool(renderers=[renderer], empty_value=0)
         plot.add_tools(tool)
         plot.toolbar.active_multi = tool
         div = Div(text='False')

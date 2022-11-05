@@ -804,7 +804,7 @@ as a list:
 
     r1 = p.rect('x', 'y', 'width', 'height', source=source)
     r2 = p.rect('x', 'y', 'width', 'height', source=source2)
-    tool = BoxEditTool(renderers=[r1, r2])
+    tool = BoxEditTool(renderers=[r1, r2], empty_value=0)
 
 The tool automatically modifies the columns of the data source
 corresponding to the ``x``, ``y``, ``width``, and ``height`` values of
@@ -871,7 +871,7 @@ you must pass the renderers to be edited as a list:
 .. code-block:: python
 
     r = p.multi_line('xs', 'ys' source=source)
-    tool = FreehandDrawTool(renderers=[r])
+    tool = FreehandDrawTool(renderers=[r], empty_value=0)
 
 The tool automatically modifies the columns on the data source
 corresponding to the ``xs`` and ``ys`` values of the glyph. Any
@@ -925,7 +925,7 @@ you must pass the renderers to be edited as a list:
 
     c1 = p.circle('x', 'y', 'width', 'height', source=source)
     r1 = p.rect('x', 'y', 0.1, 0.1, source=source2)
-    tool = PointDrawTool(renderers=[c1, r1])
+    tool = PointDrawTool(renderers=[c1, r1], empty_value=0)
 
 The tool automatically modifies the columns on the data source
 corresponding to the ``x`` and ``y`` values of the glyph. Any

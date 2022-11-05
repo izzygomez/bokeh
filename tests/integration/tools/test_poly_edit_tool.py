@@ -51,7 +51,7 @@ def _make_plot() -> Plot:
     source = ColumnDataSource(data)
     plot = Plot(height=400, width=400, x_range=Range1d(0, 3), y_range=Range1d(0, 3), min_border=0)
     renderer = plot.add_glyph(source, MultiLine(xs='xs', ys='ys', line_width=10))
-    tool = PolyEditTool(renderers=[renderer])
+    tool = PolyEditTool(renderers=[renderer], empty_value=0)
     psource = ColumnDataSource(dict(x=[], y=[]))
     prenderer = plot.add_glyph(psource, Circle(x='x', y='y', size=10))
     tool.vertex_renderer = prenderer
@@ -69,7 +69,7 @@ def _make_server_plot(expected) -> tuple[ModifyDoc, Plot, ColumnDataSource]:
     plot = Plot(height=400, width=400, x_range=Range1d(0, 3), y_range=Range1d(0, 3), min_border=0)
     def modify_doc(doc):
         renderer = plot.add_glyph(source, MultiLine(xs='xs', ys='ys'))
-        tool = PolyEditTool(renderers=[renderer])
+        tool = PolyEditTool(renderers=[renderer], empty_value=0)
         psource = ColumnDataSource(dict(x=[], y=[]))
         prenderer = plot.add_glyph(psource, Circle(x='x', y='y', size=10))
         tool.vertex_renderer = prenderer

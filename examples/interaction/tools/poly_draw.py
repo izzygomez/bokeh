@@ -8,10 +8,10 @@ r1 = p.patches([[2, 5, 8]], [[2, 8, 2]], line_width=0, alpha=0.4)
 
 r2 = p.multi_line([[1, 9]], [[5, 5]], line_width=5, alpha=0.4, color='red')
 
-draw_tool_r1 = PolyDrawTool(renderers=[r1])
+draw_tool_r1 = PolyDrawTool(renderers=[r1], empty_value=0)
 p.toolbar.active_drag = draw_tool_r1
 
-draw_tool_r2 = PolyDrawTool(renderers=[r2])
+draw_tool_r2 = PolyDrawTool(renderers=[r2], empty_value=0)
 p.add_tools(draw_tool_r1, draw_tool_r2)
 
 show(p)
