@@ -18,7 +18,7 @@ task("scripts:version", async () => {
   const dts = "export declare const version: string;\n"
 
   write(join(paths.build_dir.lib, "version.js"), js)
-  write(join(paths.build_dir.types, "version.d.ts"), dts)
+  write(join(paths.build_dir.lib, "version.d.ts"), dts)
 })
 
 task("scripts:styles", ["styles:compile"], async () => {
@@ -74,7 +74,7 @@ task("scripts:styles", ["styles:compile"], async () => {
     dts_internal.push("}")
 
     const js_file = `${join(paths.build_dir.lib, "styles", sub_path)}.js`
-    const dts_file = `${join(paths.build_dir.types, "styles", sub_path)}.d.ts`
+    const dts_file = `${join(paths.build_dir.lib, "styles", sub_path)}.d.ts`
     const dts_internal_file = `${join(paths.build_dir.all, "dts", "styles", sub_path)}.d.ts`
 
     write(js_file, `${js.join("\n")}\n`)
@@ -87,7 +87,7 @@ task("scripts:glsl", async () => {
   const lib_base = paths.src_dir.lib
 
   const js_base = paths.build_dir.lib
-  const dts_base = paths.build_dir.types
+  const dts_base = paths.build_dir.lib
 
   for (const glsl_path of scan(lib_base, [".vert", ".frag"])) {
     const sub_path = relative(lib_base, glsl_path)
