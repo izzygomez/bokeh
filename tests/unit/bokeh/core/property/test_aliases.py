@@ -36,7 +36,9 @@ import bokeh.core.property.aliases as bcpc # isort:skip
 #-----------------------------------------------------------------------------
 
 ALL = (
-    'CoordinateLike',
+    "AnchorLike",
+    "CoordinateLike",
+    "PaddingLike",
 )
 
 #-----------------------------------------------------------------------------
