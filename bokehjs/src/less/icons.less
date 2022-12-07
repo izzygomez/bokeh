@@ -210,6 +210,14 @@
   .tool-icon-mask(var(--bokeh-icon-see-off));
 }
 
+.bk-tool-icon-edit {
+  .tool-icon-mask(var(--bokeh-icon-edit));
+}
+
+.bk-tool-icon-trash {
+  .tool-icon-mask(var(--bokeh-icon-trash));
+}
+
 :host {
   // Based on https://tabler-icons.io/ (MIT License)
   --bokeh-icon-question-mark: data-uri("icons/question-mark.svg");
@@ -262,4 +270,7 @@
   --bokeh-icon-see-off: data-uri("icons/see-off.svg");
 
   --bokeh-cursor-rotate: data-uri("icons/cursor-rotate.svg") 12 12, auto;
+
+  --bokeh-icon-edit: data-uri("icons/edit.svg");
+  --bokeh-icon-trash: data-uri("icons/trash.svg");
 }

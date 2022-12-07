@@ -12,6 +12,7 @@ import {PlotView} from "../models/plots/plot"
 import {ToolView} from "../models/tools/tool"
 import {RendererView} from "../models/renderers/renderer"
 import type {CanvasView} from "../models/canvas/canvas"
+import {ContextMenu, MenuItem} from "./util/menus"
 
 export interface Moveable {
   _move_start(ev: MoveEvent): boolean
@@ -53,6 +54,10 @@ export interface Tapable {
   _pressup?(ev: TapEvent): void
 }
 
+export interface ContextMenuable {
+  _context_menu(): MenuItem[] | null
+}
+
 export function is_Moveable(obj: unknown): obj is Moveable {
   return isObject(obj) && "_move_start" in obj && "_move" in obj && "_move_end" in obj
 }
@@ -79,6 +84,10 @@ export function is_Keyable(obj: unknown): obj is Keyable {
 
 export function is_Tapable(obj: unknown): obj is Keyable {
   return isObject(obj) && "_tap" in obj
+}
+
+export function is_ContextMenuable(obj: unknown): obj is ContextMenuable {
+  return isObject(obj) && "_context_menu" in obj
 }
 
 function is_touch(event: unknown): event is TouchEvent {
@@ -173,6 +182,7 @@ export class UIEventBus implements EventListenerObject {
   readonly doubletap:    UISignal<TapEvent>     = new Signal(this, "doubletap")
   readonly press:        UISignal<TapEvent>     = new Signal(this, "press")
   readonly pressup:      UISignal<TapEvent>     = new Signal(this, "pressup")
+  readonly context_menu: UISignal<TapEvent>     = new Signal(this, "context_menu")
 
   readonly move_enter:   UISignal<MoveEvent>    = new Signal(this, "move:enter")
   readonly move:         UISignal<MoveEvent>    = new Signal(this, "move")
@@ -481,6 +491,19 @@ export class UIEventBus implements EventListenerObject {
     const event_type = signal.name
     const base_type = event_type.split(":")[0] as BaseType
     const view = this._hit_test_renderers(plot_view, e.sx, e.sy)
+
+    if (e.type == "contextmenu") {
+      if (!e.shift_key && is_ContextMenuable(view)) {
+        const menu_items = view._context_menu()
+        if (menu_items != null) {
+          srcEvent.preventDefault()
+          const {sx, sy} = e
+          const menu = new ContextMenu(menu_items, {target: this.hit_area})
+          menu.show({left: sx, top: sy})
+        }
+      }
+      return
+    }
 
     if (base_type == "pan") {
       if (this._current_pan_view == null) {
@@ -839,6 +862,10 @@ export class UIEventBus implements EventListenerObject {
     this._trigger(this.pressup, this._tap_event(e), e.srcEvent)
   }
 
+  /*private*/ _context_menu(e: MouseEvent): void {
+    this._trigger(this.context_menu, {...this._move_event(e), type: "contextmenu"}, e)
+  }
+
   /*private*/ _mouse_enter(e: MouseEvent): void {
     this._trigger(this.move_enter, this._move_event(e), e)
   }
@@ -853,10 +880,6 @@ export class UIEventBus implements EventListenerObject {
 
   /*private*/ _mouse_wheel(e: WheelEvent): void {
     this._trigger(this.scroll, this._scroll_event(e), e)
-  }
-
-  /*private*/ _context_menu(_e: MouseEvent): void {
-    // TODO
   }
 
   /*private*/ _key_down(e: KeyboardEvent): void {

@@ -180,8 +180,8 @@ export class ContextMenu { //extends DOMComponentView {
       } else if (item.content != null) {
         el = item.content
       } else {
-        const icon = item.icon != null ? div({class: [menus.menu_icon, item.icon]}) : null
-        const classes = [item.active?.() ?? false ? menus.active: null, item.class]
+        const icon = div({class: [menus.menu_icon, item.icon]})
+        const classes = [menus.menu_item, item.active?.() ?? false ? menus.active : null, item.class]
         el = div({class: classes, title: item.tooltip, tabIndex: 0}, icon, item.label, item.content)
         el.addEventListener("click", () => {
           this._item_click(item)

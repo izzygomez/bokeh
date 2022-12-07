@@ -8,12 +8,14 @@ import {SerializableState} from "core/view"
 import {CoordinateUnits} from "core/enums"
 import * as p from "core/properties"
 import {BBox, LRTB, CoordinateMapper, empty} from "core/util/bbox"
-import {PanEvent, PinchEvent, Pannable, Pinchable, MoveEvent, Moveable, KeyModifiers} from "core/ui_events"
+import {PanEvent, PinchEvent, MoveEvent, Pannable, Pinchable, Moveable, ContextMenuable, KeyModifiers} from "core/ui_events"
 import {Enum, Number, NonNegative, PartialStruct} from "core/kinds"
 import {Signal} from "core/signaling"
 import {Rect} from "core/types"
 import {assert} from "core/util/assert"
 import {isNumber} from "core/util/types"
+import {MenuItem} from "core/util/menus"
+import * as icons from "styles/icons.css"
 
 export const EDGE_TOLERANCE = 5
 
@@ -37,7 +39,7 @@ const BorderRadius = PartialStruct({
   bottom_left: NonNegative(Number),
 })
 
-export class BoxAnnotationView extends AnnotationView implements Pannable, Pinchable, Moveable, AutoRanged {
+export class BoxAnnotationView extends AnnotationView implements Pannable, Pinchable, Moveable, ContextMenuable, AutoRanged {
   override model: BoxAnnotation
   override visuals: BoxAnnotation.Visuals
 
@@ -580,6 +582,35 @@ export class BoxAnnotationView extends AnnotationView implements Pannable, Pinch
       default:
         return null
     }
+  }
+
+  _context_menu(): MenuItem[] | null {
+    return [
+      {
+        icon: icons.tool_icon_edit,
+        label: "Design ...",
+        handler: () => console.log("Design"),
+      },
+      {
+        icon: icons.tool_icon_see_off,
+        label: "Hide",
+        handler: () => this.model.visible = false,
+      },
+      {
+        icon: icons.tool_icon_trash,
+        label: "Delete",
+        handler: () => this.parent.model.remove_renderer(this.model),
+      },
+      null,
+      {
+        label: "Bring to front",
+        handler: () => console.log("Bring to front"),
+      },
+      {
+        label: "Bring to back",
+        handler: () => console.log("Bring to back"),
+      },
+    ]
   }
 }
 

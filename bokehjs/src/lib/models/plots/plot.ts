@@ -206,17 +206,25 @@ export class Plot extends LayoutDOM {
     this.setv({[side]: [...renderers, renderer]})
   }
 
+  private _delete<T>(items: T[], target: T): T[] {
+    items = items.slice()
+    remove_by(items, (item) => item == target)
+    return items
+  }
+
   remove_layout(renderer: Annotation | GuideRenderer): void {
+    this.remove_renderer(renderer)
+  }
 
-    const del = (items: (Annotation | GuideRenderer)[]): void => {
-      remove_by(items, (item) => item == renderer)
-    }
-
-    del(this.left)
-    del(this.right)
-    del(this.above)
-    del(this.below)
-    del(this.center)
+  remove_renderer(renderer: Renderer): void {
+    this.setv({
+      left: this._delete(this.left, renderer),
+      right: this._delete(this.right, renderer),
+      above: this._delete(this.above, renderer),
+      below: this._delete(this.below, renderer),
+      center: this._delete(this.center, renderer),
+      renderers: this._delete(this.renderers, renderer),
+    })
   }
 
   get data_renderers(): DataRenderer[] {
