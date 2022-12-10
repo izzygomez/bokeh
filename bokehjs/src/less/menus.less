@@ -1,8 +1,12 @@
 @import "./_mixins.less";
 
+:host {
+  --icon-size: 28px;
+}
+
 .bk-menu-icon {
-  width: 28px;
-  height: 28px;
+  width: var(--icon-size);
+  height: var(--icon-size);
 
   mask-size: 60% 60%;
   mask-position: center center;
@@ -21,7 +25,19 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding-right: 28px;
+  padding-right: var(--icon-size);
+
+  &:hover {
+    background-color: #f9f9f9;
+  }
+}
+
+.bk-label {
+  display: inline;
+}
+
+.bk-active {
+  /* keep */
 }
 
 :host {
@@ -40,7 +56,14 @@
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: var(--border-radius);
+  overflow: hidden;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+}
+
+.bk-divider {
+  cursor: default;
+  overflow: hidden;
+  background-color: #e5e5e5;
 }
 
 :host(.bk-horizontal) {
@@ -50,57 +73,12 @@
   flex-direction: column;
 }
 
-.bk-divider {
-  cursor: default;
-  overflow: hidden;
-  background-color: #e5e5e5;
-}
 :host(.bk-horizontal) > .bk-divider {
   width: 1px;
   margin: 5px 0;
 }
+
 :host(.bk-vertical) > .bk-divider {
   height: 1px;
   margin: 0 5px;
-}
-
-:host > :not(.bk-divider) {
-  border: 1px solid transparent;
-
-  --active-tool-highlight: #26aae1;
-
-  &.bk-active {
-    border-color: var(--active-tool-highlight);
-  }
-  &:hover {
-    background-color: #f9f9f9;
-  }
-  &:focus, &:focus-visible {
-    outline: 1px dotted var(--active-tool-highlight);
-    outline-offset: -1px;
-  }
-  &::-moz-focus-inner {
-    border: 0;
-  }
-}
-
-:host(.bk-horizontal) > :not(.bk-divider) {
-  &:first-child {
-    border-top-left-radius: var(--border-radius);
-    border-bottom-left-radius: var(--border-radius);
-  }
-  &:last-child {
-    border-top-right-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
-  }
-}
-:host(.bk-vertical) > :not(.bk-divider) {
-  &:first-child {
-    border-top-left-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
-  }
-  &:last-child {
-    border-bottom-left-radius: var(--border-radius);
-    border-bottom-right-radius: var(--border-radius);
-  }
 }

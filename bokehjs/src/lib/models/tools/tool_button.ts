@@ -9,6 +9,7 @@ import {Signal0} from "core/signaling"
 import * as p from "core/properties"
 
 import tool_button_css, * as tool_button from "styles/tool_button.css"
+import tool_menu_css from "styles/tool_menu.css"
 import icons_css from "styles/icons.css"
 
 import type {ToolbarView} from "./toolbar"
@@ -29,6 +30,7 @@ export abstract class ToolButtonView extends UIElementView {
     this._menu = new ContextMenu(!reverse ? items : reversed(items), {
       target: this.root.el,
       orientation,
+      extra_styles: [tool_menu_css],
       prevent_hide: (event) => event.composedPath().includes(this.el),
     })
 

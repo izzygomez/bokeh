@@ -1,0 +1,44 @@
+.bk-menu-item {
+  padding-right: 0;
+}
+
+:host > :not(.bk-divider) { // TODO: .bk-menu-item {
+  border: 1px solid transparent;
+
+  --active-tool-highlight: #26aae1;
+
+  &.bk-active {
+    border-color: var(--active-tool-highlight);
+  }
+  &:hover {
+    background-color: #f9f9f9;
+  }
+  &:focus, &:focus-visible {
+    outline: 1px dotted var(--active-tool-highlight);
+    outline-offset: -1px;
+  }
+  &::-moz-focus-inner {
+    border: 0;
+  }
+}
+
+:host(.bk-horizontal) > :not(.bk-divider) { // TODO: .bk-menu-item {
+  &:first-child {
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+  }
+  &:last-child {
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+  }
+}
+:host(.bk-vertical) > :not(.bk-divider) { // TODO: .bk-menu-items {
+  &:first-child {
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+  }
+  &:last-child {
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+  }
+}

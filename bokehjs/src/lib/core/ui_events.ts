@@ -498,7 +498,9 @@ export class UIEventBus implements EventListenerObject {
         if (menu_items != null) {
           srcEvent.preventDefault()
           const {sx, sy} = e
-          const menu = new ContextMenu(menu_items, {target: this.hit_area})
+          const menu = new ContextMenu(menu_items, {
+            target: this.canvas_view.root.el,
+          })
           menu.show({left: sx, top: sy})
         }
       }
@@ -615,7 +617,7 @@ export class UIEventBus implements EventListenerObject {
       }
       case "tap": {
         // XXX: hammerjs, why non-standard path?
-        const path: EventTarget[] = (srcEvent as any).path ?? srcEvent.composedPath()
+        const path: EventTarget[] = (srcEvent as any).path ?? srcEvent.composedPath() // XXX: always empty?
         if (path.length != 0 && path[0] != this.hit_area)
           return // don't trigger bokeh events
 

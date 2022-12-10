@@ -9,7 +9,7 @@ import base_css from "styles/base.css"
 
 export type ScreenPoint = {left?: number, right?: number, top?: number, bottom?: number}
 export type At =
-  ScreenPoint |
+  (ScreenPoint & {el?: HTMLElement}) |
   {left_of:  HTMLElement} |
   {right_of: HTMLElement} |
   {below: HTMLElement} |
@@ -132,7 +132,7 @@ export class ContextMenu { //extends DOMComponentView {
       return at
     })()
 
-    const parent_el = this.el.offsetParent ?? document.body
+    const parent_el = ("el" in at ? at.el : this.el.offsetParent) ?? document.body
     const origin = (() => {
       const rect = parent_el.getBoundingClientRect()
       const style = getComputedStyle(parent_el)
@@ -181,9 +181,11 @@ export class ContextMenu { //extends DOMComponentView {
         el = item.content
       } else {
         const icon = div({class: [menus.menu_icon, item.icon]})
+        const label = div({class: menus.label}, item.label)
         const classes = [menus.menu_item, item.active?.() ?? false ? menus.active : null, item.class]
-        el = div({class: classes, title: item.tooltip, tabIndex: 0}, icon, item.label, item.content)
-        el.addEventListener("click", () => {
+        el = div({class: classes, title: item.tooltip, tabIndex: 0}, icon, label, item.content)
+        el.addEventListener("click", (ev) => {
+          ev.stopPropagation()
           this._item_click(item)
         })
         el.addEventListener("keydown", (event) => {

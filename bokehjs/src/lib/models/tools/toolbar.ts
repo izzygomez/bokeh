@@ -19,6 +19,7 @@ import {HelpTool} from "./actions/help_tool"
 import {ContextMenu} from "core/util/menus"
 
 import toolbars_css, * as toolbars from "styles/toolbar.css"
+import tool_menu_css from "styles/tool_menu.css"
 import logos_css, * as logos from "styles/logo.css"
 import icons_css from "styles/icons.css"
 
@@ -67,6 +68,7 @@ export class ToolbarView extends UIElementView {
       target: this.root.el,
       orientation,
       reversed,
+      extra_styles: [tool_menu_css],
       prevent_hide: (event) => {
         return event.composedPath().includes(this._overflow_el)
       },
