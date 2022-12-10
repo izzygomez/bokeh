@@ -46,7 +46,7 @@ from ...core.properties import (
     TextLike,
     field,
 )
-from ...core.property.aliases import AnchorLike, PaddingLike
+from ...core.property.aliases import AnchorLike, BorderRadiusLike, PaddingLike
 from ...core.property_mixins import (
     FillProps,
     LineProps,
@@ -181,6 +181,13 @@ class Label(TextAnnotation):
 
     padding = PaddingLike(default=0, help="""
     Extra space between the text of a label and its bounding box (border).
+
+    .. note::
+        This property is experimental and may change at any point.
+    """)
+
+    border_radius = BorderRadiusLike(default=0, help="""
+    Allows the box to have rounded corners.
 
     .. note::
         This property is experimental and may change at any point.

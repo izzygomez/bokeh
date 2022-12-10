@@ -37,6 +37,8 @@ import bokeh.core.property.aliases as bcpc # isort:skip
 
 ALL = (
     "AnchorLike",
+    "BorderRadius",
+    "BorderRadiusLike",
     "CoordinateLike",
     "PaddingLike",
 )

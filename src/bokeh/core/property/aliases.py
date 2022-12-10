@@ -32,7 +32,7 @@ from .datetime import Datetime
 from .either import Either
 from .enum import Enum
 from .factors import Factor
-from .numeric import Percent
+from .numeric import NonNegative, Percent
 from .primitive import Float
 from .struct import Optional, Struct
 
@@ -42,6 +42,8 @@ from .struct import Optional, Struct
 
 __all__ = (
     "AnchorLike",
+    "BorderRadius",
+    "BorderRadiusLike",
     "CoordinateLike",
     "PaddingLike",
 )
@@ -59,6 +61,15 @@ AnchorLike = (
         ),
     )
 )
+
+BorderRadius = Struct(
+    top_left=Optional(NonNegative(Float)),
+    top_right=Optional(NonNegative(Float)),
+    bottom_right=Optional(NonNegative(Float)),
+    bottom_left=Optional(NonNegative(Float)),
+)
+
+BorderRadiusLike = Either(NonNegative(Float), BorderRadius)
 
 CoordinateLike = Either(Float, Datetime, Factor)
 

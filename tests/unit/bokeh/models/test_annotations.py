@@ -331,6 +331,7 @@ def test_Label() -> None:
         "angle_units",
         "direction",
         "padding",
+        "border_radius",
         "editable",
     ],
         TEXT,

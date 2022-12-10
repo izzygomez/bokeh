@@ -4713,6 +4713,7 @@
     angle_units: "rad",
     direction: "anticlock",
     padding: 0,
+    border_radius: 0,
     editable: false,
   },
   LabelSet: {

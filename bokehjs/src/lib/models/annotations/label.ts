@@ -15,6 +15,7 @@ import {Signal} from "core/signaling"
 import {SXY} from "../shapes/common"
 import {AffineTransform} from "core/util/affine"
 import {Node} from "../coordinates/node"
+import {BorderRadius, round_rect} from "../shapes/common"
 
 type HitTarget = "area"
 
@@ -190,6 +191,20 @@ export class LabelView extends TextAnnotationView implements Pannable {
     return {sx, sy}
   }
 
+  get border_radius(): BorderRadius {
+    const {border_radius} = this.model
+    if (isNumber(border_radius)) {
+      return {
+        top_left: border_radius,
+        top_right: border_radius,
+        bottom_right: border_radius,
+        bottom_left: border_radius,
+      }
+    } else {
+      return border_radius
+    }
+  }
+
   protected _text_box: GraphicsBox
   protected _rect: {
     sx: number
@@ -199,6 +214,7 @@ export class LabelView extends TextAnnotationView implements Pannable {
     angle: number
     anchor: XY<number>
     padding: LRTB<number>
+    border_radius: BorderRadius
   }
 
   override update_geometry(): void {
@@ -211,13 +227,13 @@ export class LabelView extends TextAnnotationView implements Pannable {
 
     const size = text_box.size()
     const {sx, sy} = this.origin
-    const {anchor, padding, angle} = this
+    const {anchor, angle, padding, border_radius} = this
 
     const width = size.width + padding.left + padding.right
     const height = size.height + padding.top + padding.bottom
 
     this._text_box = text_box
-    this._rect = {sx, sy, width, height, angle, anchor, padding}
+    this._rect = {sx, sy, width, height, angle, anchor, padding, border_radius}
   }
 
   override compute_node(node: Node): {sx: number, sy: number} | null {
@@ -262,7 +278,7 @@ export class LabelView extends TextAnnotationView implements Pannable {
   protected _render(): void {
     const {ctx} = this.layer
 
-    const {sx, sy, width, height, angle, anchor, padding} = this._rect
+    const {sx, sy, width, height, angle, anchor, padding, border_radius} = this._rect
 
     const dx = anchor.x*width
     const dy = anchor.y*height
@@ -274,8 +290,7 @@ export class LabelView extends TextAnnotationView implements Pannable {
 
     const {background_fill, border_line} = this.visuals
     if (background_fill.doit || border_line.doit) {
-      ctx.beginPath()
-      ctx.rect(0, 0, width, height)
+      round_rect(ctx, new BBox({x: 0, y: 0, width, height}), border_radius)
 
       this.visuals.background_fill.apply(ctx)
       this.visuals.border_line.apply(ctx)
@@ -387,6 +402,7 @@ export namespace Label {
     angle_units: p.Property<AngleUnits>
     direction: p.Property<Direction>
     padding: p.Property<Padding>
+    border_radius: p.Property<number | BorderRadius>
     editable: p.Property<boolean>
   }
 
@@ -408,7 +424,7 @@ export class Label extends TextAnnotation {
   static {
     this.prototype.default_view = LabelView
 
-    this.define<Label.Props>(({Boolean, Number, Angle, Auto, Or}) => ({
+    this.define<Label.Props>(({Boolean, Number, Angle, Auto, Or, NonNegative}) => ({
       anchor:      [ Or(Auto, AnchorLike), "auto" ],
       x:           [ Number ],
       y:           [ Number ],
@@ -420,6 +436,7 @@ export class Label extends TextAnnotation {
       angle_units: [ AngleUnits, "rad" ],
       direction:   [ Direction, "anticlock" ],
       padding:     [ Padding, 0 ],
+      border_radius: [ Or(NonNegative(Number), BorderRadius), 0 ],
       editable:    [ Boolean, false ],
     }))
   }
