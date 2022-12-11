@@ -39,7 +39,8 @@ from ..core.properties import (
     Override,
     Required,
 )
-from ..core.property_mixins import ScalarLineProps
+from ..core.property_mixins import ScalarFillProps, ScalarHatchProps, ScalarLineProps
+from ._nodes import OpenPathNodes, NodesDef
 from .coordinates import Coordinate
 from .renderers import Renderer
 
@@ -129,24 +130,33 @@ class Arc(Path):
     angle_units = Enum(AngleUnits, default="rad")
     direction = Enum(Direction, default="anticlock")
 
+    nodes = NodesDef(OpenPathNodes)
+
 class Bezier(Path):
-    """ A bezier curve between two points with one or two control points. """
+    """ A Bezier curve between two points with one or two control points. """
 
     # explicit __init__ to support Init signatures
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
     p0 = Required(Instance(Coordinate), help="""
+    The start point.
     """)
 
     p1 = Required(Instance(Coordinate), help="""
+    The end point.
     """)
 
     cp0 = Required(Instance(Coordinate), help="""
+    First control point.
     """)
 
     cp1 = Nullable(Instance(Coordinate), default=None, help="""
+    Second control point. If ``None`` then it's a quadratic otherwise
+    cubic Bezier curve.
     """)
+
+    nodes = NodesDef(OpenPathNodes)
 
 class Circle(Path):
     """ A circle. """
@@ -169,12 +179,16 @@ class Line(Path):
         super().__init__(*args, **kwargs)
 
     p0 = Required(Instance(Coordinate), help="""
+    The start point.
     """)
 
     p1 = Required(Instance(Coordinate), help="""
+    The end point.
     """)
 
-class Marker(Path):
+    nodes = NodesDef(OpenPathNodes)
+
+class Marker(Shape):
     """ """
 
     # explicit __init__ to support Init signatures
@@ -186,6 +200,18 @@ class Marker(Path):
     size = Required(NonNegative(Float))
 
     variety = Required(Enum(MarkerType))
+
+    line_props = Include(ScalarLineProps, help="""
+    The {prop} values for the line.
+    """)
+
+    fill_props = Include(ScalarFillProps, help="""
+    The {prop} values for the fill.
+    """)
+
+    hatch_props = Include(ScalarHatchProps, help="""
+    The {prop} values for the hatch.
+    """)
 
 class Spline(Path):
     """ """

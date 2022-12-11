@@ -1,3 +1,5 @@
 export {CoordinateMapping} from "./coordinate_mapping"
 export {Coordinate} from "./coordinate"
 export {Node} from "./node"
+export {NamedNode} from "./named_node"
+export {ParametricNode} from "./parametric_node"

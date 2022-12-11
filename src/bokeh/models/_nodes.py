@@ -24,7 +24,12 @@ log = logging.getLogger(__name__)
 from typing import Generic, TypeVar
 
 # Bokeh imports
-from .coordinates import CoordinatesProvider, Node
+from .coordinates import (
+    CoordinatesProvider,
+    NamedNode,
+    Node,
+    ParametricNode,
+)
 
 #-----------------------------------------------------------------------------
 # Globals and constants
@@ -48,7 +53,7 @@ class Nodes:
 
     __str__ = __repr__
 
-class NodeDef:
+class NamedNodeDef:
 
     _term: str
     _node: Node | None
@@ -61,7 +66,7 @@ class NodeDef:
 
     def __get__(self, obj: Nodes, type: type[Nodes] | None = None) -> Node:
         if self._node is None:
-            self._node = Node(target=obj.target, term=self._term)
+            self._node = NamedNode(target=obj.target, term=self._term)
         return self._node
 
 T = TypeVar("T", bound=Nodes)
@@ -82,15 +87,23 @@ class NodesDef(Generic[T]):
 
 class BoxNodes(Nodes):
 
-    top_left = NodeDef()
-    top_center = NodeDef()
-    top_right = NodeDef()
-    center_left = NodeDef()
-    center = NodeDef()
-    center_right = NodeDef()
-    bottom_left = NodeDef()
-    bottom_center = NodeDef()
-    bottom_right = NodeDef()
+    top_left = NamedNodeDef()
+    top_center = NamedNodeDef()
+    top_right = NamedNodeDef()
+    center_left = NamedNodeDef()
+    center = NamedNodeDef()
+    center_right = NamedNodeDef()
+    bottom_left = NamedNodeDef()
+    bottom_center = NamedNodeDef()
+    bottom_right = NamedNodeDef()
+
+class OpenPathNodes(Nodes):
+
+    start = NamedNodeDef()
+    end = NamedNodeDef()
+
+    def parametric(self, t: float) -> Node:
+        return ParametricNode(target=self.target, t=t)
 
 #-----------------------------------------------------------------------------
 # Dev API

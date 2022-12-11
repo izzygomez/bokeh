@@ -2624,7 +2624,17 @@
       type: "symbol",
       name: "unset",
     },
+  },
+  NamedNode: {
+    __extends__: "Node",
     term: {
+      type: "symbol",
+      name: "unset",
+    },
+  },
+  ParametricNode: {
+    __extends__: "Node",
+    t: {
       type: "symbol",
       name: "unset",
     },
@@ -5610,7 +5620,7 @@
     },
   },
   "bokeh.models.shapes.Marker": {
-    __extends__: "bokeh.models.shapes.Path",
+    __extends__: "bokeh.models.shapes.Shape",
     center: {
       type: "symbol",
       name: "unset",
@@ -5622,6 +5632,23 @@
     variety: {
       type: "symbol",
       name: "unset",
+    },
+    line_color: "black",
+    line_alpha: 1.0,
+    line_width: 1,
+    line_join: "bevel",
+    line_cap: "butt",
+    line_dash: [],
+    line_dash_offset: 0,
+    fill_color: "gray",
+    fill_alpha: 1.0,
+    hatch_color: "black",
+    hatch_alpha: 1.0,
+    hatch_scale: 12.0,
+    hatch_pattern: null,
+    hatch_weight: 1.0,
+    hatch_extra: {
+      type: "map",
     },
   },
   "bokeh.models.shapes.Spline": {

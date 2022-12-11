@@ -18,6 +18,26 @@ export class ArcView extends PathView {
   }
 
   override update_geometry(): void {
+    super.update_geometry()
+    const {center, start_angle, end_angle, anticlock} = this
+    const {radius} = this.model
+    this._geometry = {center, radius, start_angle, end_angle, anticlock}
+  }
+
+  protected _geometry: {
+    center: SXY
+    radius: number
+    start_angle: number
+    end_angle: number
+    anticlock: boolean
+  }
+
+  get center(): SXY {
+    const {center} = this.model
+    if (center instanceof Node)
+      return this.parent.resolve_node(center)
+    else
+      return {sx: NaN, sy: NaN}
   }
 
   get anticlock(): boolean {
@@ -34,19 +54,12 @@ export class ArcView extends PathView {
     return resolve_angle(start_angle, angle_units)
   }
 
-  get radius(): number {
-    return this.model.radius
-  }
-
-  get center(): SXY {
-    return {sx: 0, sy: 0}
-  }
-
   paint(): void {
     const {ctx} = this.layer
+    const {center, radius, start_angle, end_angle, anticlock} = this._geometry
+    const {sx, sy} = center
     ctx.beginPath()
-    const {sx, sy} = this.center
-    ctx.arc(sx, sy, this.radius, this.start_angle, this.end_angle, this.anticlock)
+    ctx.arc(sx, sy, radius, start_angle, end_angle, anticlock)
     this.visuals.line.apply(ctx)
   }
 }

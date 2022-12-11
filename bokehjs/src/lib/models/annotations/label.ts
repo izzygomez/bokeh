@@ -14,7 +14,7 @@ import {Pannable, PanEvent, KeyModifiers} from "core/ui_events"
 import {Signal} from "core/signaling"
 import {SXY} from "../shapes/common"
 import {AffineTransform} from "core/util/affine"
-import {Node} from "../coordinates/node"
+import {Node, NamedNode} from "../coordinates"
 import {BorderRadius, round_rect} from "../shapes/common"
 
 type HitTarget = "area"
@@ -238,6 +238,9 @@ export class LabelView extends TextAnnotationView implements Pannable {
 
   override compute_node(node: Node): {sx: number, sy: number} | null {
     if (node.target != this.model)
+      return null
+
+    if (!(node instanceof NamedNode))
       return null
 
     const {sx, sy, anchor, width, height, angle} = this._rect

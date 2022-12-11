@@ -832,7 +832,7 @@ export class PlotView extends LayoutDOMView implements Renderable {
 
     const computed = view.compute_node(node)
     if (computed == null)
-      throw new Error(`node ${node.term} unsupported by ${node.target}`)
+      throw new Error(`node ${node} not supported by ${node.target}`)
 
     this._computed_nodes.set(node, computed)
     return computed

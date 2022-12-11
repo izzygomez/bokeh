@@ -1,7 +1,7 @@
 import {Annotation, AnnotationView} from "./annotation"
 import {Scale} from "../scales/scale"
 import {AutoRanged, auto_ranged} from "../ranges/data_range1d"
-import {Node} from "../coordinates/node"
+import {Node, NamedNode} from "../coordinates"
 import * as mixins from "core/property_mixins"
 import * as visuals from "core/visuals"
 import {SerializableState} from "core/view"
@@ -520,6 +520,9 @@ export class BoxAnnotationView extends AnnotationView implements Pannable, Pinch
 
   override compute_node(node: Node): {sx: number, sy: number} | null {
     if (node.target != this.model)
+      return null
+
+    if (!(node instanceof NamedNode))
       return null
 
     const {left, right, hcenter, vcenter, top, bottom} = this.bbox

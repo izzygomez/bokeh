@@ -9,13 +9,12 @@ export namespace Node {
   export type Attrs = p.AttrsOf<Props>
   export type Props = Coordinate.Props & {
     target: p.Property<CoordinatesProvider>
-    term: p.Property<string>
   }
 }
 
 export interface Node extends Node.Attrs {}
 
-export class Node extends Coordinate {
+export abstract class Node extends Coordinate {
   override properties: Node.Props
 
   constructor(attrs?: Partial<Node.Attrs>) {
@@ -23,9 +22,8 @@ export class Node extends Coordinate {
   }
 
   static {
-    this.define<Node.Props>(({String, Ref}) => ({
+    this.define<Node.Props>(({Ref}) => ({
       target: [ Ref(CoordinatesProvider) ],
-      term: [ String ],
     }))
   }
 }

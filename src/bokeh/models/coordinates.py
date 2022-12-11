@@ -22,6 +22,7 @@ from ..core.has_props import HasProps, abstract
 from ..core.properties import (
     Instance,
     InstanceDefault,
+    Percent,
     Required,
     String,
 )
@@ -55,8 +56,9 @@ class Coordinate(Model):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
+@abstract
 class Node(Coordinate):
-    """ Represents a symbolic coordinate, like e.g. box corners. """
+    """ Base class for symbolic nodes. """
 
     # explicit __init__ to support Init signatures
     def __init__(self, *args, **kwargs) -> None:
@@ -66,8 +68,25 @@ class Node(Coordinate):
     The model this node is provided by.
     """)
 
+class NamedNode(Node):
+    """ Represents a symbolic coordinate, like e.g. box corners. """
+
+    # explicit __init__ to support Init signatures
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
     term = Required(String, help="""
     The name of a node provided by a ``target`` model.
+    """)
+
+class ParametricNode(Node):
+    """ Represents a point along a path. """
+
+    # explicit __init__ to support Init signatures
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+    t = Required(Percent, help="""
     """)
 
 class CoordinateMapping(Model):
