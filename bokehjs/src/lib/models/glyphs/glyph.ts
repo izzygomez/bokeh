@@ -327,7 +327,7 @@ export abstract class GlyphView extends View {
 
   protected _set_data(_indices: number[] | null): void {}
 
-  private get _index_size(): number {
+  protected get _index_size(): number {
     return this.data_size
   }
 
