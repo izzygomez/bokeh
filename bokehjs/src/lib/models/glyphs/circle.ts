@@ -11,6 +11,8 @@ import {map, max, minmax} from "core/util/arrayable"
 import {Context2d} from "core/util/canvas"
 import {Selection} from "../selections/selection"
 import {Range1d} from "../ranges/range1d"
+import type {CircleGL} from "./webgl/circle"
+import type {ReglWrapper} from "./webgl/regl_wrap"
 
 export type CircleData = XYGlyphData & p.UniformsOf<Circle.Mixins> & {
   readonly angle: p.Uniform<number>
@@ -31,16 +33,11 @@ export class CircleView extends XYGlyphView {
   override visuals: Circle.Visuals
 
   /** @internal */
-  override glglyph?: import("./webgl/circle").CircleGL
+  override glglyph?: CircleGL
 
-  override async lazy_initialize(): Promise<void> {
-    await super.lazy_initialize()
-
-    const {webgl} = this.renderer.plot_view.canvas_view
-    if (webgl != null && webgl.regl_wrapper.has_webgl) {
-      const {CircleGL} = await import("./webgl/circle")
-      this.glglyph = new CircleGL(webgl.regl_wrapper, this)
-    }
+  override async construct_glglyph(impl: ReglWrapper): Promise<CircleGL> {
+    const {CircleGL} = await import("./webgl/circle")
+    return new CircleGL(impl, this)
   }
 
   get use_radius(): boolean {

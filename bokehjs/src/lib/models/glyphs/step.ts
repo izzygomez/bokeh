@@ -7,6 +7,8 @@ import {Rect} from "core/types"
 import {StepMode} from "core/enums"
 import {Context2d} from "core/util/canvas"
 import {unreachable} from "core/util/assert"
+import type {StepGL} from "./webgl/step"
+import type {ReglWrapper} from "./webgl/regl_wrap"
 
 export type StepData = XYGlyphData
 
@@ -17,16 +19,11 @@ export class StepView extends XYGlyphView {
   override visuals: Step.Visuals
 
   /** @internal */
-  override glglyph?: import("./webgl/step").StepGL
+  override glglyph?: StepGL
 
-  override async lazy_initialize(): Promise<void> {
-    await super.lazy_initialize()
-
-    const {webgl} = this.renderer.plot_view.canvas_view
-    if (webgl != null && webgl.regl_wrapper.has_webgl) {
-      const {StepGL} = await import("./webgl/step")
-      this.glglyph = new StepGL(webgl.regl_wrapper, this)
-    }
+  override async construct_glglyph(impl: ReglWrapper): Promise<StepGL> {
+    const {StepGL} = await import("./webgl/step")
+    return new StepGL(impl, this)
   }
 
   protected _render(ctx: Context2d, indices: number[], data?: StepData): void {

@@ -1,5 +1,4 @@
 import {Glyph, GlyphView, GlyphData} from "./glyph"
-
 import {PointGeometry, RectGeometry, SpanGeometry} from "core/geometry"
 import * as hittest from "core/hittest"
 import * as p from "core/properties"
@@ -10,9 +9,10 @@ import {SpatialIndex} from "core/util/spatial"
 import * as visuals from "core/visuals"
 import {HexTileOrientation} from "core/enums"
 import {inplace} from "core/util/projections"
-
 import {generic_area_vector_legend} from "./utils"
 import {Selection} from "../selections/selection"
+import type {HexTileGL} from "./webgl/hex_tile"
+import type {ReglWrapper} from "./webgl/regl_wrap"
 
 export type Vertices = [number, number, number, number, number, number]
 
@@ -39,16 +39,11 @@ export class HexTileView extends GlyphView {
   override visuals: HexTile.Visuals
 
   /** @internal */
-  override glglyph?: import("./webgl/hex_tile").HexTileGL
+  override glglyph?: HexTileGL
 
-  override async lazy_initialize(): Promise<void> {
-    await super.lazy_initialize()
-
-    const {webgl} = this.renderer.plot_view.canvas_view
-    if (webgl != null && webgl.regl_wrapper.has_webgl) {
-      const {HexTileGL} = await import("./webgl/hex_tile")
-      this.glglyph = new HexTileGL(webgl.regl_wrapper, this)
-    }
+  override async construct_glglyph(impl: ReglWrapper): Promise<HexTileGL> {
+    const {HexTileGL} = await import("./webgl/hex_tile")
+    return new HexTileGL(impl, this)
   }
 
   scenterxy(i: number): [number, number] {

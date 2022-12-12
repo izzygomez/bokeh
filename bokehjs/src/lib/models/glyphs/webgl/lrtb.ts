@@ -1,14 +1,20 @@
+import {Arrayable} from "core/types"
 import {Transform} from "./base"
 import {MarkerVisuals} from "./base_marker"
 import {Float32Buffer} from "./buffer"
 import {ReglWrapper} from "./regl_wrap"
 import {SingleMarkerGL} from "./single_marker"
-import type {BlockView} from "../block"
-import type {HBarView} from "../hbar"
-import type {QuadView} from "../quad"
-import type {VBarView} from "../vbar"
+import type {GlyphView} from "../glyph"
 
-type AnyLRTBView = BlockView | HBarView | QuadView | VBarView
+// BlockView | HBarView | QuadView | VBarView | HBandView | VBandView
+type AnyLRTBView = GlyphView & {
+  glglyph?: SingleMarkerGL
+  visuals: MarkerVisuals
+  sright: Arrayable<number>
+  sbottom: Arrayable<number>
+  sleft: Arrayable<number>
+  stop: Arrayable<number>
+}
 
 export class LRTBGL extends SingleMarkerGL {
   constructor(regl_wrapper: ReglWrapper, override readonly glyph: AnyLRTBView) {

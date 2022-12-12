@@ -8,6 +8,8 @@ import * as visuals from "core/visuals"
 import * as hittest from "core/hittest"
 import {Context2d} from "core/util/canvas"
 import {Selection} from "../selections/selection"
+import type {LineGL} from "./webgl/line_gl"
+import type {ReglWrapper} from "./webgl/regl_wrap"
 
 export type LineData = XYGlyphData & p.UniformsOf<Line.Mixins>
 
@@ -20,14 +22,9 @@ export class LineView extends XYGlyphView {
   /** @internal */
   override glglyph?: import("./webgl/line_gl").LineGL
 
-  override async lazy_initialize(): Promise<void> {
-    await super.lazy_initialize()
-
-    const {webgl} = this.renderer.plot_view.canvas_view
-    if (webgl != null && webgl.regl_wrapper.has_webgl) {
-      const {LineGL} = await import("./webgl/line_gl")
-      this.glglyph = new LineGL(webgl.regl_wrapper, this)
-    }
+  override async construct_glglyph(impl: ReglWrapper): Promise<LineGL> {
+    const {LineGL} = await import("./webgl/line_gl")
+    return new LineGL(impl, this)
   }
 
   protected _render(ctx: Context2d, indices: number[], data?: LineData): void {

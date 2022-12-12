@@ -21,6 +21,8 @@ import {Selection} from "../selections/selection"
 import {GlyphRendererView} from "../renderers/glyph_renderer"
 import {ColumnarDataSource} from "../sources/columnar_data_source"
 import {Decoration} from "../graphics/decoration"
+import type {BaseGLGlyph} from "./webgl/base"
+import type {ReglWrapper} from "./webgl/regl_wrap"
 
 const {abs, ceil} = Math
 
@@ -39,7 +41,9 @@ export abstract class GlyphView extends View {
   }
 
   /** @internal */
-  glglyph?: import("./webgl/base").BaseGLGlyph
+  glglyph?: BaseGLGlyph
+
+  async construct_glglyph?(impl: ReglWrapper): Promise<BaseGLGlyph>
 
   get has_webgl(): boolean {
     return this.glglyph != null
@@ -82,6 +86,13 @@ export abstract class GlyphView extends View {
   override async lazy_initialize(): Promise<void> {
     await super.lazy_initialize()
     await build_views(this.decorations, this.model.decorations, {parent: this.parent})
+
+    if (this.construct_glglyph != null) {
+      const {webgl} = this.renderer.plot_view.canvas_view
+      if (webgl != null && webgl.regl_wrapper.has_webgl) {
+        this.glglyph = await this.construct_glglyph(webgl.regl_wrapper)
+      }
+    }
   }
 
   request_render(): void {

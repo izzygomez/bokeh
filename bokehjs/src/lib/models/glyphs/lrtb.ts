@@ -9,6 +9,8 @@ import {generic_area_vector_legend} from "./utils"
 import {PointGeometry, SpanGeometry, RectGeometry} from "core/geometry"
 import {Selection} from "../selections/selection"
 import * as p from "core/properties"
+import type {LRTBGL} from "./webgl/lrtb"
+import type {ReglWrapper} from "./webgl/regl_wrap"
 
 // This class is intended to be a private implementation detail that can
 // be re-used by various rect, bar, box, quad, etc. glyphs.
@@ -30,6 +32,13 @@ export interface LRTBView extends LRTBData {}
 export abstract class LRTBView extends GlyphView {
   override model: LRTB
   override visuals: LRTB.Visuals
+
+  override glglyph?: LRTBGL
+
+  override async construct_glglyph(impl: ReglWrapper): Promise<LRTBGL> {
+    const {LRTBGL} = await import("./webgl/lrtb")
+    return new LRTBGL(impl, this)
+  }
 
   override get_anchor_point(anchor: Anchor, i: number, _spt: [number, number]): {x: number, y: number} | null {
     const left = Math.min(this.sleft[i], this.sright[i])

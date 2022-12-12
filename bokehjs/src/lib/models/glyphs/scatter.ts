@@ -4,6 +4,8 @@ import {MarkerType} from "core/enums"
 import {Rect} from "core/types"
 import * as p from "core/properties"
 import {Context2d} from "core/util/canvas"
+import type {MultiMarkerGL} from "./webgl/multi_marker"
+import type {ReglWrapper} from "./webgl/regl_wrap"
 
 export type ScatterData = MarkerData & {
   readonly marker: p.Uniform<MarkerType | null>
@@ -15,16 +17,11 @@ export class ScatterView extends MarkerView {
   override model: Scatter
 
   /** @internal */
-  override glglyph?: import("./webgl/multi_marker").MultiMarkerGL
+  override glglyph?: MultiMarkerGL
 
-  override async lazy_initialize(): Promise<void> {
-    await super.lazy_initialize()
-
-    const {webgl} = this.renderer.plot_view.canvas_view
-    if (webgl != null && webgl.regl_wrapper.has_webgl) {
-      const {MultiMarkerGL} = await import("./webgl/multi_marker")
-      this.glglyph = new MultiMarkerGL(webgl.regl_wrapper, this)
-    }
+  override async construct_glglyph(impl: ReglWrapper): Promise<MultiMarkerGL> {
+    const {MultiMarkerGL} = await import("./webgl/multi_marker")
+    return new MultiMarkerGL(impl, this)
   }
 
   protected override _render(ctx: Context2d, indices: number[], data?: ScatterData): void {
