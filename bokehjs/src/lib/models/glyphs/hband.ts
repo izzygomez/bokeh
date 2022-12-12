@@ -6,11 +6,15 @@ import {SpatialIndex} from "core/util/spatial"
 import {map} from "core/util/arrayable"
 import {Glyph, GlyphView, GlyphData} from "./glyph"
 import * as p from "core/properties"
+import type {LRTBGL} from "./webgl/lrtb"
+import type {ReglWrapper} from "./webgl/regl_wrap"
 
 export type HBandData = GlyphData & p.UniformsOf<HBand.Mixins> & {
   _top: FloatArray
   _bottom: FloatArray
 
+  sleft: ScreenArray
+  sright: ScreenArray
   stop: ScreenArray
   sbottom: ScreenArray
 }
@@ -21,6 +25,13 @@ export class HBandView extends GlyphView {
   override model: HBand
   override visuals: HBand.Visuals
 
+  override glglyph?: LRTBGL
+
+  override async construct_glglyph(impl: ReglWrapper): Promise<LRTBGL> {
+    const {LRTBGL} = await import("./webgl/lrtb")
+    return new LRTBGL(impl, this)
+  }
+
   override get _index_size(): number {
     return 0
   }
@@ -30,6 +41,12 @@ export class HBandView extends GlyphView {
   protected override _map_data(): void {
     super._map_data()
     const {round} = Math
+    const {left, right} = this.renderer.plot_view.frame.bbox
+    const n = this.data_size
+    this.sleft = new ScreenArray(n)
+    this.sright = new ScreenArray(n)
+    this.sleft.fill(left)
+    this.sright.fill(right)
     this.stop = map(this.stop, (yi) => round(yi))
     this.sbottom = map(this.sbottom, (yi) => round(yi))
   }

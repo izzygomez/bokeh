@@ -6,6 +6,8 @@ import {SpatialIndex} from "core/util/spatial"
 import {map} from "core/util/arrayable"
 import {Glyph, GlyphView, GlyphData} from "./glyph"
 import * as p from "core/properties"
+import type {LRTBGL} from "./webgl/lrtb"
+import type {ReglWrapper} from "./webgl/regl_wrap"
 
 export type VBandData = GlyphData & p.UniformsOf<VBand.Mixins> & {
   _left: FloatArray
@@ -13,6 +15,8 @@ export type VBandData = GlyphData & p.UniformsOf<VBand.Mixins> & {
 
   sleft: ScreenArray
   sright: ScreenArray
+  stop: ScreenArray
+  sbottom: ScreenArray
 }
 
 export interface VBandView extends VBandData {}
@@ -20,6 +24,13 @@ export interface VBandView extends VBandData {}
 export class VBandView extends GlyphView {
   override model: VBand
   override visuals: VBand.Visuals
+
+  override glglyph?: LRTBGL
+
+  async provide_glglyph(impl: ReglWrapper): Promise<LRTBGL> {
+    const {LRTBGL} = await import("./webgl/lrtb")
+    return new LRTBGL(impl, this)
+  }
 
   override get _index_size(): number {
     return 0
@@ -32,6 +43,12 @@ export class VBandView extends GlyphView {
     const {round} = Math
     this.sleft = map(this.sleft, (xi) => round(xi))
     this.sright = map(this.sright, (xi) => round(xi))
+    const {top, bottom} = this.renderer.plot_view.frame.bbox
+    const n = this.data_size
+    this.stop = new ScreenArray(n)
+    this.sbottom = new ScreenArray(n)
+    this.stop.fill(top)
+    this.sbottom.fill(bottom)
   }
 
   scenterxy(i: number): [number, number] {
