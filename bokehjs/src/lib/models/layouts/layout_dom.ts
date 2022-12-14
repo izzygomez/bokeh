@@ -144,8 +144,8 @@ export abstract class LayoutDOMView extends UIElementView {
     this.class_list.add(...this.css_classes())
 
     for (const child_view of this.child_views) {
-      this.shadow_el.appendChild(child_view.el)
       child_view.render()
+      this.shadow_el.appendChild(child_view.el)
       child_view.after_render()
     }
   }
@@ -420,8 +420,13 @@ export abstract class LayoutDOMView extends UIElementView {
   }
 
   override render_to(element: Node): void {
+    if (!this.is_layout_root)
+      throw new Error(`${this.toString()} is not a root layout`)
+
+    this.render()
     element.appendChild(this.el)
-    this.build()
+    this.after_render()
+
     this.notify_finished()
   }
 
@@ -443,16 +448,6 @@ export abstract class LayoutDOMView extends UIElementView {
         })
       }
     }
-  }
-
-  build(): this {
-    if (!this.is_layout_root)
-      throw new Error(`${this.toString()} is not a root layout`)
-
-    this.render()
-    this.after_render()
-
-    return this
   }
 
   async rebuild(): Promise<void> {
