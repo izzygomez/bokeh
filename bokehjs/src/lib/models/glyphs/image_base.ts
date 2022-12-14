@@ -185,14 +185,13 @@ export abstract class ImageBaseView extends XYGlyphView {
     const x_i = this._x[i]
     const y_i = this._y[i]
 
-    const [x_sign, y_sign] = this.xy_sign
     const [x_anchor, y_anchor] = this.xy_anchor
 
-    const [x0, x1] = [x_i - x_sign*x_anchor*dw_i, x_i + x_sign*(1 - x_anchor)*dw_i]
-    const [y0, y1] = [y_i + y_sign*y_anchor*dh_i, y_i - y_sign*(1 - y_anchor)*dh_i]
+    const [x0, x1] = [x_i - x_anchor*dw_i, x_i + (1 - x_anchor)*dw_i]
+    const [y0, y1] = [y_i + y_anchor*dh_i, y_i - (1 - y_anchor)*dh_i]
 
-    const [l, r] = x0 < x1 ? [x0, x1] : [x1, x0]
-    const [b, t] = y0 < y1 ? [y0, y1] : [y1, y0]
+    const [l, r] = x0 <= x1 ? [x0, x1] : [x1, x0]
+    const [b, t] = y0 <= y1 ? [y0, y1] : [y1, y0]
     return [l, r, t, b]
   }
 
