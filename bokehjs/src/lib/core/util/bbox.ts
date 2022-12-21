@@ -1,6 +1,6 @@
 import {Arrayable, ScreenArray, Rect, Box, Interval, Size} from "../types"
 import {equals, Equatable, Comparator} from "./eq"
-import {Rect as GraphicsRect} from "./affine"
+import * as affine from "./affine"
 
 const {min, max} = Math
 
@@ -40,11 +40,23 @@ export function union(a: Rect, b: Rect): Rect {
   }
 }
 
+export type XY<T = number> = {
+  x: T
+  y: T
+}
+
 export type LRTB<T = number> = {
   left: T
   right: T
   top: T
   bottom: T
+}
+
+export type Corners<T = number> = {
+  top_left: T
+  top_right: T
+  bottom_right: T
+  bottom_left: T
 }
 
 export type HorizontalPosition =
@@ -197,7 +209,7 @@ export class BBox implements Rect, Equatable {
 
   get size(): Size { return {width: this.width, height: this.height} }
 
-  get rect(): GraphicsRect {
+  get rect(): affine.Rect {
     const {x0, y0, x1, y1} = this
     return {
       p0: {x: x0, y: y0},
